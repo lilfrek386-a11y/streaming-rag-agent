@@ -33,7 +33,7 @@ async def _call_api(client, messages, model):
 
 
 class ChatSession:
-    def __init__(self, client, model, system_prompt: str = None):
+    def __init__(self, client, model, system_prompt: str | None = None):
         self.client = client
         self.model = model
         self.messages = [
@@ -99,7 +99,7 @@ class ChatSession:
 
         return full_text
 
-    def save_log(self, path: str = None):
+    def save_log(self, path: str | None = None):
         if path is None:
             date_str = datetime.now().strftime("%Y-%m-%d")
             os.makedirs(settings.chat.log_dir, exist_ok=True)
