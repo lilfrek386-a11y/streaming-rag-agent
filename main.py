@@ -39,6 +39,9 @@ async def main():
                 console.print("\nInterrupted.", style="dim")
                 break
 
+            if not user_input.strip():
+                continue
+
             if user_input.lower() in QUIT_COMMANDS:
                 break
 
@@ -47,8 +50,8 @@ async def main():
             except AuthenticationError:
                 console.print("Invalid API key — exiting.", style="bold red")
                 break
-            except Exception:
-                console.print("Message failed — try again or type 'quit' to exit.", style="red")
+            except Exception as e:
+                console.print(f"Message failed: {e}", style="red")
                 continue
     finally:
         session.print_summary()

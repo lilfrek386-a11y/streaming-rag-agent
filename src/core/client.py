@@ -31,7 +31,14 @@ class APIClient:
         stop=stop_after_attempt(settings.chat.max_retries),
         reraise=True,
     )
-    async def create_chat_completion(self, messages: list[dict], model: str, stream: bool = False):
+    async def create_chat_completion(
+            self,
+            messages: list[dict],
+            model: str,
+            stream: bool = False,
+            tools: list | None = None,
+            tool_choice: str | None = None
+    ):
         kwargs = {
             "model": model,
             "messages": messages,
@@ -40,5 +47,9 @@ class APIClient:
 
         if stream:
             kwargs["stream_options"] = {"include_usage": True}
+        if tools:
+            kwargs["tools"] = tools
+        if tool_choice:
+            kwargs["tool_choice"] = tool_choice
 
         return await self._client.chat.completions.create(**kwargs)

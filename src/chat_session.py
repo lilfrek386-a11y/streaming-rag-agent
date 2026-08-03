@@ -1,3 +1,5 @@
+import asyncio
+import json
 import os
 from datetime import datetime
 
@@ -12,9 +14,11 @@ from openai import (
 )
 from rich.console import Console
 
-from src.core.constants import FALLBACK_ENCODING
+from src.core.constants import FALLBACK_ENCODING, MAX_ROUNDS
 from src.core.settings import settings
 from src.core.client import APIClient
+from src.tools.functions import TOOL_FUNCTIONS
+from src.tools.schemas import tools
 
 console = Console()
 
@@ -31,6 +35,50 @@ class ChatSession:
 
     async def send_message(self, user_input: str) -> str:
         self.messages.append({"role": "user", "content": user_input})
+
+        start_tokens = self.total_tokens
+
+        for step in range(MAX_ROUNDS):
+            console.print(f"[dim][Agent thinking... Round {step + 1}/{MAX_ROUNDS}][/dim]", end="\r")
+
+            response = await self.api.create_chat_completion(
+                messages=self.messages,
+                model=self.model_name,
+                stream=False,
+                tools=tools
+            )
+
+            print("\r" + " " * 40 + "\r", end="")
+
+            if response.usage:
+                self.total_tokens += response.usage.total_tokens
+
+            message = response.choices[0].message
+
+            if not message.tool_calls:
+                break
+
+            assistant_message = {
+                "role": "assistant",
+                "content": message.content or "",
+                "tool_calls": [
+                    {
+                        "id": tc.id,
+                        "type": tc.type,
+                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                    }
+                    for tc in message.tool_calls
+                ],
+            }
+            self.messages.append(assistant_message)
+
+            for tc in message.tool_calls:
+                name = tc.function.name
+                arguments = tc.function.arguments
+                console.print(f"[dim]  Calling tool: {name}({arguments})[/dim]")
+
+                result = await self.execute_tool(name, arguments)
+                self.messages.append({"role": "tool", "tool_call_id": tc.id, "content": result})
 
         console.print("[dim][Assistant is typing...][/dim]", end="\r")
 
@@ -83,12 +131,13 @@ class ChatSession:
         self.messages.append({"role": "assistant", "content": full_text})
 
         if usage:
-            tokens_this_turn = usage.total_tokens
+            self.total_tokens += usage.total_tokens
         else:
             encoding = tiktoken.get_encoding(FALLBACK_ENCODING)
             tokens_this_turn = len(encoding.encode(user_input)) + len(encoding.encode(full_text))
+            self.total_tokens += tokens_this_turn
 
-        self.total_tokens += tokens_this_turn
+        tokens_this_turn = self.total_tokens - start_tokens
         console.print(f"[dim][Tokens used: {tokens_this_turn} | Total so far: {self.total_tokens}][/dim]")
 
         return full_text
@@ -115,3 +164,15 @@ class ChatSession:
         console.print(f"Duration: {str(duration).split('.')[0]}")
         console.print(f"Messages exchanged: {user_turns}")
         console.print(f"Total tokens used: [bold]{self.total_tokens}[/bold]")
+
+    async def execute_tool(self, name, arguments):
+        func = TOOL_FUNCTIONS.get(name)
+        if not func:
+            return json.dumps({"error": f"Unknown tool: {name}"})
+
+        args = json.loads(arguments)
+
+        try:
+            return await asyncio.to_thread(func, **args)
+        except Exception as e:
+            return json.dumps({"error": f"Error executing tool {name}: {str(e)}"})
