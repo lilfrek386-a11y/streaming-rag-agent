@@ -1,41 +1,28 @@
-import tiktoken
 import os
 from datetime import datetime
+
+import tiktoken
 from openai import (
     AuthenticationError,
     RateLimitError,
     BadRequestError,
     InternalServerError,
     APITimeoutError,
-    APIConnectionError)
+    APIConnectionError
+)
 from rich.console import Console
-from tenacity import retry, retry_if_exception_type, wait_exponential, stop_after_attempt
 
+from src.core.constants import FALLBACK_ENCODING
 from src.core.settings import settings
+from src.core.client import APIClient
 
 console = Console()
-FALLBACK_ENCODING = "cl100k_base"
-
-
-@retry(
-    retry=retry_if_exception_type((RateLimitError, APIConnectionError, APITimeoutError, InternalServerError)),
-    wait=wait_exponential(min=1, max=settings.chat.retry_max_wait),
-    stop=stop_after_attempt(settings.chat.max_retries),
-    reraise=True,
-)
-async def _call_api(client, messages, model):
-    return await client.chat.completions.create(
-        model=model,
-        messages=messages,
-        stream=True,
-        stream_options={"include_usage": True},
-    )
 
 
 class ChatSession:
-    def __init__(self, client, model, system_prompt: str | None = None):
-        self.client = client
-        self.model = model
+    def __init__(self, api_client: APIClient, model_name: str, system_prompt: str | None = None):
+        self.api = api_client
+        self.model_name = model_name
         self.messages = [
             {"role": "system", "content": system_prompt or settings.chat.default_system_prompt}
         ]
@@ -48,7 +35,11 @@ class ChatSession:
         console.print("[dim][Assistant is typing...][/dim]", end="\r")
 
         try:
-            stream = await _call_api(self.client, self.messages, self.model)
+            stream = await self.api.create_chat_completion(
+                messages=self.messages,
+                model=self.model_name,
+                stream=True
+            )
         except AuthenticationError:
             console.print("Error: Invalid API key. Check your .env file.", style="bold red")
             self.messages.pop()
@@ -73,13 +64,16 @@ class ChatSession:
         async for chunk in stream:
             if chunk.choices:
                 content = chunk.choices[0].delta.content
+
                 if content:
                     if first_chunk:
                         print("\r" + " " * 40 + "\r", end="")
                         console.print("[bold green]Assistant:[/bold green] ", end="")
                         first_chunk = False
+
                     print(content, end="", flush=True)
                     collected.append(content)
+
             if chunk.usage:
                 usage = chunk.usage
 
@@ -107,7 +101,7 @@ class ChatSession:
 
         with open(path, "a", encoding="utf-8") as f:
             f.write(f"\n## Session {self.started_at.isoformat()}\n")
-            f.write(f"Model: {self.model} | Total tokens: {self.total_tokens}\n\n")
+            f.write(f"Model: {self.model_name} | Total tokens: {self.total_tokens}\n\n")
             for msg in self.messages:
                 f.write(f"**{msg['role']}**: {msg['content']}\n\n")
 

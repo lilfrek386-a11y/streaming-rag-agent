@@ -5,11 +5,11 @@ from openai import AuthenticationError
 from rich.console import Console
 
 from src.chat_session import ChatSession
-from src.core.client import create_client
+from src.core.client import create_client, APIClient
+from src.core.constants import QUIT_COMMANDS
 from src.core.settings import settings
 
 console = Console()
-QUIT_COMMANDS = ("quit", "exit", "q")
 
 
 def parse_args():
@@ -25,8 +25,8 @@ def parse_args():
 
 async def main():
     args = parse_args()
-    client = create_client()
-    session = ChatSession(client, model=settings.groq.model, system_prompt=args.prompt)
+    api_client = APIClient(create_client())
+    session = ChatSession(api_client, model_name=settings.groq.model, system_prompt=args.prompt)
 
     if args.prompt:
         console.print(f"> System Prompt: {args.prompt}", style="bold magenta")
