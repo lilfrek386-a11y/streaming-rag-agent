@@ -10,7 +10,7 @@ from openai import (
     BadRequestError,
     InternalServerError,
     APITimeoutError,
-    APIConnectionError
+    APIConnectionError,
 )
 from rich.console import Console
 
@@ -24,11 +24,16 @@ console = Console()
 
 
 class ChatSession:
-    def __init__(self, api_client: APIClient, model_name: str, system_prompt: str | None = None):
+    def __init__(
+        self, api_client: APIClient, model_name: str, system_prompt: str | None = None
+    ):
         self.api = api_client
         self.model_name = model_name
         self.messages = [
-            {"role": "system", "content": system_prompt or settings.chat.default_system_prompt}
+            {
+                "role": "system",
+                "content": system_prompt or settings.chat.default_system_prompt,
+            }
         ]
         self.total_tokens = 0
         self.started_at = datetime.now()
@@ -39,13 +44,13 @@ class ChatSession:
         start_tokens = self.total_tokens
 
         for step in range(MAX_ROUNDS):
-            console.print(f"[dim][Agent thinking... Round {step + 1}/{MAX_ROUNDS}][/dim]", end="\r")
+            console.print(
+                f"[dim][Agent thinking... Round {step + 1}/{MAX_ROUNDS}][/dim]",
+                end="\r",
+            )
 
             response = await self.api.create_chat_completion(
-                messages=self.messages,
-                model=self.model_name,
-                stream=False,
-                tools=tools
+                messages=self.messages, model=self.model_name, stream=False, tools=tools
             )
 
             print("\r" + " " * 40 + "\r", end="")
@@ -65,7 +70,10 @@ class ChatSession:
                     {
                         "id": tc.id,
                         "type": tc.type,
-                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                        "function": {
+                            "name": tc.function.name,
+                            "arguments": tc.function.arguments,
+                        },
                     }
                     for tc in message.tool_calls
                 ],
@@ -78,25 +86,32 @@ class ChatSession:
                 console.print(f"[dim]  Calling tool: {name}({arguments})[/dim]")
 
                 result = await self.execute_tool(name, arguments)
-                self.messages.append({"role": "tool", "tool_call_id": tc.id, "content": result})
+                self.messages.append(
+                    {"role": "tool", "tool_call_id": tc.id, "content": result}
+                )
 
         console.print("[dim][Assistant is typing...][/dim]", end="\r")
 
         try:
             stream = await self.api.create_chat_completion(
-                messages=self.messages,
-                model=self.model_name,
-                stream=True
+                messages=self.messages, model=self.model_name, stream=True
             )
         except AuthenticationError:
-            console.print("Error: Invalid API key. Check your .env file.", style="bold red")
+            console.print(
+                "Error: Invalid API key. Check your .env file.", style="bold red"
+            )
             self.messages.pop()
             raise
         except BadRequestError as e:
             console.print(f"Error: Bad request — {e}. Check your input.", style="red")
             self.messages.pop()
             raise
-        except (RateLimitError, APITimeoutError, APIConnectionError, InternalServerError) as e:
+        except (
+            RateLimitError,
+            APITimeoutError,
+            APIConnectionError,
+            InternalServerError,
+        ) as e:
             console.print(f"Error: {type(e).__name__} after retries — {e}", style="red")
             self.messages.pop()
             raise
@@ -134,11 +149,15 @@ class ChatSession:
             self.total_tokens += usage.total_tokens
         else:
             encoding = tiktoken.get_encoding(FALLBACK_ENCODING)
-            tokens_this_turn = len(encoding.encode(user_input)) + len(encoding.encode(full_text))
+            tokens_this_turn = len(encoding.encode(user_input)) + len(
+                encoding.encode(full_text)
+            )
             self.total_tokens += tokens_this_turn
 
         tokens_this_turn = self.total_tokens - start_tokens
-        console.print(f"[dim][Tokens used: {tokens_this_turn} | Total so far: {self.total_tokens}][/dim]")
+        console.print(
+            f"[dim][Tokens used: {tokens_this_turn} | Total so far: {self.total_tokens}][/dim]"
+        )
 
         return full_text
 
@@ -165,7 +184,7 @@ class ChatSession:
         console.print(f"Messages exchanged: {user_turns}")
         console.print(f"Total tokens used: [bold]{self.total_tokens}[/bold]")
 
-    async def execute_tool(self, name, arguments):
+    async def execute_tool(self, name: str, arguments: str) -> str:
         func = TOOL_FUNCTIONS.get(name)
         if not func:
             return json.dumps({"error": f"Unknown tool: {name}"})
