@@ -17,6 +17,7 @@ from rich.console import Console
 from src.core.constants import FALLBACK_ENCODING, MAX_ROUNDS
 from src.core.settings import settings
 from src.core.client import APIClient
+from src.core.schemas import ToolCall, ToolCallFunction
 from src.tools.functions import TOOL_FUNCTIONS
 from src.tools.schemas import tools
 
@@ -67,14 +68,13 @@ class ChatSession:
                 "role": "assistant",
                 "content": message.content or "",
                 "tool_calls": [
-                    {
-                        "id": tc.id,
-                        "type": tc.type,
-                        "function": {
-                            "name": tc.function.name,
-                            "arguments": tc.function.arguments,
-                        },
-                    }
+                    ToolCall(
+                        id=tc.id,
+                        type=tc.type,
+                        function=ToolCallFunction(
+                            name=tc.function.name, arguments=tc.function.arguments
+                        ),
+                    ).model_dump()
                     for tc in message.tool_calls
                 ],
             }

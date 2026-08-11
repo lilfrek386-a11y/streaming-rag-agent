@@ -1,3 +1,5 @@
+from typing import Any
+
 from openai import (
     AsyncOpenAI,
     RateLimitError,
@@ -16,20 +18,12 @@ from src.core.settings import settings
 
 
 class APIClient:
-    def __init__(self, client: AsyncOpenAI):
-        self._client = client
-
-    @classmethod
-    def create(cls) -> "APIClient":
-        if not settings.groq.api_key:
+    def __init__(self, api_key: str, base_url: str):
+        if not api_key:
             print("Error: GROQ_API_KEY not found in .env")
             raise SystemExit(1)
 
-        client = AsyncOpenAI(
-            base_url=settings.groq.base_url,
-            api_key=settings.groq.api_key,
-        )
-        return cls(client)
+        self._client = AsyncOpenAI(base_url=base_url, api_key=api_key)
 
     @retry(
         retry=retry_if_exception_type(
@@ -41,12 +35,12 @@ class APIClient:
     )
     async def create_chat_completion(
         self,
-        messages: list[dict],
+        messages: list[dict[str, Any]],
         model: str,
         stream: bool = False,
-        tools: list | None = None,
+        tools: list[dict[str, Any]] | None = None,
     ):
-        kwargs = {
+        kwargs: dict[str, Any] = {
             "model": model,
             "messages": messages,
             "stream": stream,

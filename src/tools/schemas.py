@@ -8,12 +8,12 @@ calculator_tool = {
             "properties": {
                 "expression": {
                     "type": "string",
-                    "description": "A mathematical expression to evaluate, e.g. '7**12' or '(25 * 4) + 17'"
+                    "description": "A mathematical expression to evaluate, e.g. '7**12' or '(25 * 4) + 17'",
                 }
             },
-            "required": ["expression"]
-        }
-    }
+            "required": ["expression"],
+        },
+    },
 }
 
 wikipedia_tool = {
@@ -26,16 +26,16 @@ wikipedia_tool = {
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "The topic or term to look up, e.g. 'French Revolution' or 'Guido van Rossum'"
+                    "description": "The topic or term to look up, e.g. 'French Revolution' or 'Guido van Rossum'",
                 },
                 "lang": {
                     "type": "string",
-                    "description": "The 2-letter language code, e.g., 'ru' for Russian, 'en' for English, 'de' for German. Choose based on the user's input language."
-                }
+                    "description": "The 2-letter language code, e.g., 'ru' for Russian, 'en' for English, 'de' for German. Choose based on the user's input language.",
+                },
             },
-            "required": ["query", "lang"]
-        }
-    }
+            "required": ["query", "lang"],
+        },
+    },
 }
 
 explain_tool = {
@@ -48,16 +48,16 @@ explain_tool = {
             "properties": {
                 "topic": {
                     "type": "string",
-                    "description": "The concept to explain, e.g. 'overfitting' or 'photosynthesis'"
+                    "description": "The concept to explain, e.g. 'overfitting' or 'photosynthesis'",
                 },
                 "lang": {
                     "type": "string",
-                    "description": "The 2-letter language code matching the user's input language, e.g. 'ru' for Russian, 'en' for English."
-                }
+                    "description": "The 2-letter language code matching the user's input language, e.g. 'ru' for Russian, 'en' for English.",
+                },
             },
-            "required": ["topic", "lang"]
-        }
-    }
+            "required": ["topic", "lang"],
+        },
+    },
 }
 
 quiz_tool = {
@@ -70,17 +70,17 @@ quiz_tool = {
             "properties": {
                 "theme": {
                     "type": "string",
-                    "description": "The topic of the quiz, e.g., 'photosynthesis', 'Python basics'."
+                    "description": "The topic of the quiz, e.g., 'photosynthesis', 'Python basics'.",
                 },
                 "difficulty": {
                     "type": "string",
                     "enum": ["easy", "medium", "hard"],
-                    "description": "Difficulty level of the quiz."
-                }
+                    "description": "Difficulty level of the quiz.",
+                },
             },
-            "required": ["theme", "difficulty"]
-        }
-    }
+            "required": ["theme", "difficulty"],
+        },
+    },
 }
 
 fake_lookup_tool = {
@@ -93,12 +93,12 @@ fake_lookup_tool = {
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "The topic or term to look up in the internal database, e.g. 'python' or 'docker'."
+                    "description": "The topic or term to look up in the internal database, e.g. 'python' or 'docker'.",
                 }
             },
-            "required": ["query"]
-        }
-    }
+            "required": ["query"],
+        },
+    },
 }
 
 tools = [calculator_tool, fake_lookup_tool, wikipedia_tool, explain_tool, quiz_tool]
