@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 from datetime import datetime
+from typing import Any
 
 import tiktoken
 from openai import (
@@ -30,7 +31,7 @@ class ChatSession:
     ):
         self.api = api_client
         self.model_name = model_name
-        self.messages = [
+        self.messages: list[dict[str, Any]] = [
             {
                 "role": "system",
                 "content": system_prompt or settings.chat.default_system_prompt,
@@ -43,6 +44,7 @@ class ChatSession:
         self.messages.append({"role": "user", "content": user_input})
 
         start_tokens = self.total_tokens
+        rounds_exhausted = True
 
         for step in range(MAX_ROUNDS):
             console.print(
@@ -62,6 +64,7 @@ class ChatSession:
             message = response.choices[0].message
 
             if not message.tool_calls:
+                rounds_exhausted = False
                 break
 
             assistant_message = {
@@ -89,6 +92,12 @@ class ChatSession:
                 self.messages.append(
                     {"role": "tool", "tool_call_id": tc.id, "content": result}
                 )
+
+        if rounds_exhausted:
+            console.print(
+                f"[yellow][Warning: hit MAX_ROUNDS={MAX_ROUNDS} while the model still "
+                f"wanted to call tools. The answer below may be incomplete.][/yellow]"
+            )
 
         console.print("[dim][Assistant is typing...][/dim]", end="\r")
 
