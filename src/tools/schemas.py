@@ -101,4 +101,29 @@ fake_lookup_tool = {
     },
 }
 
-tools = [calculator_tool, fake_lookup_tool, wikipedia_tool, explain_tool, quiz_tool]
+knowledge_base_tool = {
+    "type": "function",
+    "function": {
+        "name": "search_knowledge_base",
+        "description": "Search the user's personal indexed knowledge base FIRST for any study or topic question — it contains curated notes on specific subjects (e.g. machine learning, FastAPI, etc.). ALWAYS try this tool before explain or search_wikipedia when the user asks to learn about, explain, or discuss a topic — the knowledge base may have more specific, curated content than general knowledge. Only skip it for pure definitions of unrelated people/places/things, or if it returns no relevant results. Cite the source number in your answer, e.g. 'According to Source 2...'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The natural-language question or topic to search for in the knowledge base.",
+                }
+            },
+            "required": ["query"],
+        },
+    },
+}
+
+tools = [
+    calculator_tool,
+    fake_lookup_tool,
+    wikipedia_tool,
+    explain_tool,
+    quiz_tool,
+    knowledge_base_tool,
+]
