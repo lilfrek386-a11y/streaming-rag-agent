@@ -1,7 +1,7 @@
 from rich.console import Console
 
 from src.core.client import APIClient
-from src.core.prompts import SUMMARY_PROMPTS, SummaryMode
+from src.core.prompts import SUMMARY_PROMPTS, TranscriptionMode
 
 console = Console()
 
@@ -10,7 +10,7 @@ async def summarize(
     api_client: APIClient,
     transcript: str,
     model: str,
-    mode: SummaryMode = SummaryMode.SUMMARY,
+    mode: TranscriptionMode = TranscriptionMode.SUMMARY,
 ) -> str | None:
 
     prompt = SUMMARY_PROMPTS[mode]

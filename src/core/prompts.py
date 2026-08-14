@@ -1,18 +1,18 @@
 from enum import Enum
 
 
-class SummaryMode(str, Enum):
+class TranscriptionMode(str, Enum):
     SUMMARY = "summary"
     EXTRACT_KEYWORDS = "extract_keywords"
     GENERATE_TITLE = "generate_title"
     QNA = "qna"
 
 
-SUMMARY_PROMPTS: dict[SummaryMode, str] = {
-    SummaryMode.SUMMARY: "Summarize the following transcript in 2-4 clear sentences. Respond in the same language as the transcript.",
-    SummaryMode.EXTRACT_KEYWORDS: "Extract 5-10 key terms or topics from this transcript, as a comma-separated list. Respond in the same language as the transcript.",
-    SummaryMode.GENERATE_TITLE: "Generate one short, descriptive title (under 10 words) for this transcript. Respond in the same language as the transcript.",
-    SummaryMode.QNA: "Generate 3 question-and-answer pairs based on the key points in this transcript. Respond in the same language as the transcript.",
+SUMMARY_PROMPTS: dict[TranscriptionMode, str] = {
+    TranscriptionMode.SUMMARY: "Summarize the following transcript in 2-4 clear sentences. Respond in the same language as the transcript.",
+    TranscriptionMode.EXTRACT_KEYWORDS: "Extract 5-10 key terms or topics from this transcript, as a comma-separated list. Respond in the same language as the transcript.",
+    TranscriptionMode.GENERATE_TITLE: "Generate one short, descriptive title (under 10 words) for this transcript. Respond in the same language as the transcript.",
+    TranscriptionMode.QNA: "Generate 3 question-and-answer pairs based on the key points in this transcript. Respond in the same language as the transcript.",
 }
 
 
