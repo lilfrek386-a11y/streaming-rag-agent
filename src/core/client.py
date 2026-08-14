@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from openai import (
@@ -52,3 +53,16 @@ class APIClient:
             kwargs["tools"] = tools
 
         return await self._client.chat.completions.create(**kwargs)
+
+    async def transcribe_audio(
+        self,
+        file_path: Path,
+        model: str,
+        response_format: str = "verbose_json",
+    ):
+        with open(file_path, "rb") as f:
+            return await self._client.audio.transcriptions.create(
+                file=f,
+                model=model,
+                response_format=response_format,
+            )
