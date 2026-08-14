@@ -21,6 +21,7 @@ from src.core.client import APIClient
 from src.core.schemas import ToolCall, ToolCallFunction
 from src.tools.functions import TOOL_FUNCTIONS
 from src.tools.schemas import tools
+from src.core.prompts import DEFAULT_SYSTEM_PROMPT
 
 console = Console()
 
@@ -34,7 +35,7 @@ class ChatSession:
         self.messages: list[dict[str, Any]] = [
             {
                 "role": "system",
-                "content": system_prompt or settings.chat.default_system_prompt,
+                "content": system_prompt or DEFAULT_SYSTEM_PROMPT,
             }
         ]
         self.total_tokens = 0
