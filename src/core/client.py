@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from openai import (
     AsyncOpenAI,
@@ -15,6 +15,7 @@ from tenacity import (
     stop_after_attempt,
 )
 
+from src.core.constants import WhisperResponseFormat
 from src.core.settings import settings
 
 
@@ -58,11 +59,11 @@ class APIClient:
         self,
         file_path: Path,
         model: str,
-        response_format: str = "verbose_json",
-    ):
+        response_format: WhisperResponseFormat = WhisperResponseFormat.VERBOSE_JSON,
+    ) -> Any:
         with open(file_path, "rb") as f:
             return await self._client.audio.transcriptions.create(
                 file=f,
                 model=model,
-                response_format=response_format,
+                response_format=cast(Any, response_format.value),
             )

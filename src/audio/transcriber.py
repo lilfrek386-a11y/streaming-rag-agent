@@ -2,6 +2,7 @@ from pathlib import Path
 
 from rich.console import Console
 
+from src.core.constants import WhisperResponseFormat
 from src.core.client import APIClient
 from src.core.constants import WHISPER_MODEL
 
@@ -13,7 +14,7 @@ async def transcribe(api_client: APIClient, file_path: Path) -> dict | None:
         response = await api_client.transcribe_audio(
             file_path=file_path,
             model=WHISPER_MODEL,
-            response_format="verbose_json",
+            response_format=WhisperResponseFormat.VERBOSE_JSON,
         )
     except Exception as e:
         console.print(f"[red]Transcription failed for {file_path.name}: {e}[/red]")
