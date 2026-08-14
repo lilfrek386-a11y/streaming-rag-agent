@@ -16,6 +16,7 @@ from tenacity import (
 )
 
 from src.core.constants import WhisperResponseFormat
+from src.core.schemas import ChatMessage
 from src.core.settings import settings
 
 
@@ -37,14 +38,19 @@ class APIClient:
     )
     async def create_chat_completion(
         self,
-        messages: list[dict[str, Any]],
+        messages: list[dict[str, Any]] | list[ChatMessage],
         model: str,
         stream: bool = False,
         tools: list[dict[str, Any]] | None = None,
     ):
+        formatted_messages = [
+            m.model_dump(exclude_none=True) if isinstance(m, ChatMessage) else m
+            for m in messages
+        ]
+
         kwargs: dict[str, Any] = {
             "model": model,
-            "messages": messages,
+            "messages": formatted_messages,
             "stream": stream,
         }
 

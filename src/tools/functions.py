@@ -6,8 +6,6 @@ from typing import Callable
 
 from src.retrieval.vector_store import VectorStore
 
-console = Console()
-
 
 def calculate(expression: str) -> str:
     try:
@@ -122,7 +120,7 @@ def fake_lookup(query: str) -> str:
     )
 
 
-def make_search_knowledge_base(vector_store: VectorStore) -> Callable:
+def make_search_knowledge_base(vector_store: VectorStore, console: Console) -> Callable:
 
     def search_knowledge_base(query: str, top_n: int = 3) -> str:
         results = vector_store.search(query, top_n=top_n)

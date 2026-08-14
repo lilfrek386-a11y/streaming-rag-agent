@@ -8,7 +8,7 @@ class TranscriptionMode(str, Enum):
     QNA = "qna"
 
 
-SUMMARY_PROMPTS: dict[TranscriptionMode, str] = {
+TRANSCRIPTION_PROMPTS: dict[TranscriptionMode, str] = {
     TranscriptionMode.SUMMARY: "Summarize the following transcript in 2-4 clear sentences. Respond in the same language as the transcript.",
     TranscriptionMode.EXTRACT_KEYWORDS: "Extract 5-10 key terms or topics from this transcript, as a comma-separated list. Respond in the same language as the transcript.",
     TranscriptionMode.GENERATE_TITLE: "Generate one short, descriptive title (under 10 words) for this transcript. Respond in the same language as the transcript.",

@@ -5,6 +5,7 @@ from pathlib import Path
 from openai import AuthenticationError
 from rich.console import Console
 
+from src.audio.service import AudioService
 from src.chat_session import ChatSession
 from src.core.client import APIClient
 from src.core.constants import QUIT_COMMANDS
@@ -14,7 +15,6 @@ from src.corpus.loader import load_corpus
 from src.retrieval.embedder import Embedder
 from src.retrieval.vector_store import VectorStore
 from src.tools.functions import TOOL_FUNCTIONS, make_search_knowledge_base
-from src.audio.service import process_audio_files
 
 console = Console()
 
@@ -54,13 +54,20 @@ async def main():
 
     vector_store, _ = setup_knowledge_base()
 
-    TOOL_FUNCTIONS["search_knowledge_base"] = make_search_knowledge_base(vector_store)
+    TOOL_FUNCTIONS["search_knowledge_base"] = make_search_knowledge_base(
+        vector_store, console
+    )
 
     api_client = APIClient(
         api_key=settings.groq.api_key, base_url=settings.groq.base_url
     )
+    audio_service = AudioService(api_client, vector_store, console)
+
     session = ChatSession(
-        api_client, model_name=settings.groq.model, system_prompt=args.prompt
+        api_client,
+        model_name=settings.groq.model,
+        console=console,
+        system_prompt=args.prompt,
     )
 
     if args.prompt:
@@ -86,9 +93,7 @@ async def main():
 
             if user_input.lower().startswith("file:"):
                 paths_string = user_input.split(":", 1)[1].strip()
-                await process_audio_files(
-                    api_client, vector_store, paths_string, args.mode
-                )
+                await audio_service.process_files(paths_string, args.mode)
                 continue
 
             try:

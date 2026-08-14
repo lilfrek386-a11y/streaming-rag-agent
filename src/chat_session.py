@@ -2,7 +2,6 @@ import asyncio
 import json
 import os
 from datetime import datetime
-from typing import Any
 
 import tiktoken
 from openai import (
@@ -18,43 +17,52 @@ from rich.console import Console
 from src.core.constants import FALLBACK_ENCODING, MAX_ROUNDS
 from src.core.settings import settings
 from src.core.client import APIClient
-from src.core.schemas import ToolCall, ToolCallFunction
+from src.core.schemas import ChatMessage, ToolCall, ToolCallFunction
 from src.tools.functions import TOOL_FUNCTIONS
 from src.tools.schemas import tools
 from src.core.prompts import DEFAULT_SYSTEM_PROMPT
 
-console = Console()
-
 
 class ChatSession:
     def __init__(
-        self, api_client: APIClient, model_name: str, system_prompt: str | None = None
+        self,
+        api_client: APIClient,
+        model_name: str,
+        console: Console,
+        system_prompt: str | None = None,
     ):
         self.api = api_client
         self.model_name = model_name
-        self.messages: list[dict[str, Any]] = [
-            {
-                "role": "system",
-                "content": system_prompt or DEFAULT_SYSTEM_PROMPT,
-            }
+        self._console = console
+        self.messages: list[ChatMessage] = [
+            ChatMessage(
+                role="system",
+                content=system_prompt or DEFAULT_SYSTEM_PROMPT,
+            )
         ]
         self.total_tokens = 0
         self.started_at = datetime.now()
 
+    def _get_api_messages(self) -> list[dict]:
+        return [m.model_dump(exclude_none=True) for m in self.messages]
+
     async def send_message(self, user_input: str) -> str:
-        self.messages.append({"role": "user", "content": user_input})
+        self.messages.append(ChatMessage(role="user", content=user_input))
 
         start_tokens = self.total_tokens
         rounds_exhausted = True
 
         for step in range(MAX_ROUNDS):
-            console.print(
+            self._console.print(
                 f"[dim][Agent thinking... Round {step + 1}/{MAX_ROUNDS}][/dim]",
                 end="\r",
             )
 
             response = await self.api.create_chat_completion(
-                messages=self.messages, model=self.model_name, stream=False, tools=tools
+                messages=self._get_api_messages(),
+                model=self.model_name,
+                stream=False,
+                tools=tools,
             )
 
             print("\r" + " " * 40 + "\r", end="")
@@ -68,52 +76,60 @@ class ChatSession:
                 rounds_exhausted = False
                 break
 
-            assistant_message = {
-                "role": "assistant",
-                "content": message.content or "",
-                "tool_calls": [
+            assistant_msg = ChatMessage(
+                role="assistant",
+                content=message.content or "",
+                tool_calls=[
                     ToolCall(
                         id=tc.id,
                         type=tc.type,
                         function=ToolCallFunction(
                             name=tc.function.name, arguments=tc.function.arguments
                         ),
-                    ).model_dump()
+                    )
                     for tc in message.tool_calls
                 ],
-            }
-            self.messages.append(assistant_message)
+            )
+            self.messages.append(assistant_msg)
 
             for tc in message.tool_calls:
                 name = tc.function.name
                 arguments = tc.function.arguments
-                console.print(f"[dim]  Calling tool: {name}({arguments})[/dim]")
+                self._console.print(f"[dim]  Calling tool: {name}({arguments})[/dim]")
 
                 result = await self.execute_tool(name, arguments)
                 self.messages.append(
-                    {"role": "tool", "tool_call_id": tc.id, "content": result}
+                    ChatMessage(
+                        role="tool",
+                        tool_call_id=tc.id,
+                        content=result,
+                    )
                 )
 
         if rounds_exhausted:
-            console.print(
+            self._console.print(
                 f"[yellow][Warning: hit MAX_ROUNDS={MAX_ROUNDS} while the model still "
                 f"wanted to call tools. The answer below may be incomplete.][/yellow]"
             )
 
-        console.print("[dim][Assistant is typing...][/dim]", end="\r")
+        self._console.print("[dim][Assistant is typing...][/dim]", end="\r")
 
         try:
             stream = await self.api.create_chat_completion(
-                messages=self.messages, model=self.model_name, stream=True
+                messages=self._get_api_messages(),
+                model=self.model_name,
+                stream=True,
             )
         except AuthenticationError:
-            console.print(
+            self._console.print(
                 "Error: Invalid API key. Check your .env file.", style="bold red"
             )
             self.messages.pop()
             raise
         except BadRequestError as e:
-            console.print(f"Error: Bad request — {e}. Check your input.", style="red")
+            self._console.print(
+                f"Error: Bad request — {e}. Check your input.", style="red"
+            )
             self.messages.pop()
             raise
         except (
@@ -122,11 +138,13 @@ class ChatSession:
             APIConnectionError,
             InternalServerError,
         ) as e:
-            console.print(f"Error: {type(e).__name__} after retries — {e}", style="red")
+            self._console.print(
+                f"Error: {type(e).__name__} after retries — {e}", style="red"
+            )
             self.messages.pop()
             raise
         except Exception as e:
-            console.print(f"Unexpected error: {e}", style="bold red")
+            self._console.print(f"Unexpected error: {e}", style="bold red")
             self.messages.pop()
             raise
 
@@ -141,7 +159,9 @@ class ChatSession:
                 if content:
                     if first_chunk:
                         print("\r" + " " * 40 + "\r", end="")
-                        console.print("[bold green]Assistant:[/bold green] ", end="")
+                        self._console.print(
+                            "[bold green]Assistant:[/bold green] ", end=""
+                        )
                         first_chunk = False
 
                     print(content, end="", flush=True)
@@ -153,7 +173,7 @@ class ChatSession:
         print()
 
         full_text = "".join(collected)
-        self.messages.append({"role": "assistant", "content": full_text})
+        self.messages.append(ChatMessage(role="assistant", content=full_text))
 
         if usage:
             self.total_tokens += usage.total_tokens
@@ -165,7 +185,7 @@ class ChatSession:
             self.total_tokens += tokens_this_turn
 
         tokens_this_turn = self.total_tokens - start_tokens
-        console.print(
+        self._console.print(
             f"[dim][Tokens used: {tokens_this_turn} | Total so far: {self.total_tokens}][/dim]"
         )
 
@@ -181,18 +201,19 @@ class ChatSession:
             f.write(f"\n## Session {self.started_at.isoformat()}\n")
             f.write(f"Model: {self.model_name} | Total tokens: {self.total_tokens}\n\n")
             for msg in self.messages:
-                f.write(f"**{msg['role']}**: {msg['content']}\n\n")
+                content_str = msg.content if msg.content is not None else ""
+                f.write(f"**{msg.role}**: {content_str}\n\n")
 
-        print(f"[Conversation saved to {path}]")
+        self._console.print(f"[dim][Conversation saved to {path}][/dim]")
 
     def print_summary(self):
         duration = datetime.now() - self.started_at
-        user_turns = sum(1 for m in self.messages if m["role"] == "user")
+        user_turns = sum(1 for m in self.messages if m.role == "user")
 
-        console.print("\n[bold cyan]── Session Summary ──[/bold cyan]")
-        console.print(f"Duration: {str(duration).split('.')[0]}")
-        console.print(f"Messages exchanged: {user_turns}")
-        console.print(f"Total tokens used: [bold]{self.total_tokens}[/bold]")
+        self._console.print("\n[bold cyan]── Session Summary ──[/bold cyan]")
+        self._console.print(f"Duration: {str(duration).split('.')[0]}")
+        self._console.print(f"Messages exchanged: {user_turns}")
+        self._console.print(f"Total tokens used: [bold]{self.total_tokens}[/bold]")
 
     async def execute_tool(self, name: str, arguments: str) -> str:
         func = TOOL_FUNCTIONS.get(name)
