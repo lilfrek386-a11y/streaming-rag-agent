@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+from pathlib import Path
 
 from openai import AuthenticationError
 from rich.console import Console
@@ -8,6 +9,10 @@ from src.chat_session import ChatSession
 from src.core.client import APIClient
 from src.core.constants import QUIT_COMMANDS
 from src.core.settings import settings
+from src.corpus.loader import load_corpus
+from src.retrieval.embedder import Embedder
+from src.retrieval.vector_store import VectorStore
+from src.tools.functions import TOOL_FUNCTIONS, make_search_knowledge_base
 
 console = Console()
 
@@ -25,8 +30,23 @@ def parse_args():
     return parser.parse_args()
 
 
+def setup_knowledge_base() -> VectorStore:
+    console.print("[dim]Indexing knowledge base...[/dim]")
+    embedder = Embedder()
+    vector_store = VectorStore(embedder)
+    corpus_path = Path("src/corpus")
+    entries = load_corpus(corpus_dir=corpus_path)
+    vector_store.add_many(entries)
+    return vector_store
+
+
 async def main():
     args = parse_args()
+
+    vector_store = setup_knowledge_base()
+
+    TOOL_FUNCTIONS["search_knowledge_base"] = make_search_knowledge_base(vector_store)
+
     api_client = APIClient(
         api_key=settings.groq.api_key, base_url=settings.groq.base_url
     )

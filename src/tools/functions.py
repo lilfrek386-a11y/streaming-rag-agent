@@ -1,6 +1,12 @@
 import json
 import math
 import wikipedia
+from rich.console import Console
+from typing import Callable
+
+from src.retrieval.vector_store import VectorStore
+
+console = Console()
 
 
 def calculate(expression: str) -> str:
@@ -116,7 +122,36 @@ def fake_lookup(query: str) -> str:
     )
 
 
-TOOL_FUNCTIONS = {
+def make_search_knowledge_base(vector_store: VectorStore) -> Callable:
+
+    def search_knowledge_base(query: str, top_n: int = 3) -> str:
+        results = vector_store.search(query, top_n=top_n)
+
+        if not results:
+            console.print(
+                f"[dim]-> No matches found in knowledge base for: '{query}'[/dim]"
+            )
+            return json.dumps(
+                {"error": "No relevant information found in the knowledge base"}
+            )
+
+        console.print(f"\n[bold]-> Top {len(results)} Matches:[/bold]")
+        for i, r in enumerate(results, 1):
+            preview = r["text"][:150] + ("..." if len(r["text"]) > 150 else "")
+            console.print(f"[dim][{i}] ({r['source']}) \"{preview}\"[/dim]")
+        console.print()
+
+        formatted = [
+            {"source_number": i + 1, "source": r["source"], "text": r["text"]}
+            for i, r in enumerate(results)
+        ]
+
+        return json.dumps({"query": query, "matches": formatted}, ensure_ascii=False)
+
+    return search_knowledge_base
+
+
+TOOL_FUNCTIONS: dict[str, Callable[..., str]] = {
     "calculate": calculate,
     "search_wikipedia": search_wikipedia,
     "explain": explain,
