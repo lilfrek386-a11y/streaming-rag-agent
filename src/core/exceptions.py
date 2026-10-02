@@ -1,2 +1,0 @@
-class MissingAPIKeyError(Exception):
-    pass
