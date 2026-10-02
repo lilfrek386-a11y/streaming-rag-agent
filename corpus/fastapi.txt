@@ -1,0 +1,2136 @@
+FastAPI is a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints.
+
+The key features are:
+
+Fast: Very high performance, on par with NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
+Fast to code: Increase the speed to develop features by about 200% to 300%. *
+Fewer bugs: Reduce about 40% of human (developer) induced errors. *
+Intuitive: Great editor support. Completion everywhere. Less time debugging.
+Easy: Designed to be easy to use and learn. Less time reading docs.
+Short: Minimize code duplication. Multiple features from each parameter declaration. Fewer bugs.
+Robust: Get production-ready code. With automatic interactive documentation.
+Standards-based: Based on (and fully compatible with) the open standards for APIs: OpenAPI (previously known as Swagger) and JSON Schema.
+* estimation based on tests conducted by an internal development team, building production applications.Features¶
+FastAPI features¶
+FastAPI gives you the following:
+
+Based on open standards¶
+OpenAPI for API creation, including declarations of path operations, parameters, request bodies, security, etc.
+Automatic data model documentation with JSON Schema (as OpenAPI itself is based on JSON Schema).
+Designed around these standards, after a meticulous study. Instead of an afterthought layer on top.
+This also allows using automatic client code generation in many languages.
+Automatic docs¶
+Interactive API documentation and exploration web user interfaces. As the framework is based on OpenAPI, there are multiple options, 2 included by default.
+
+Swagger UI, with interactive exploration, call and test your API directly from the browser.
+Swagger UI interaction
+
+Alternative API documentation with ReDoc.
+ReDoc
+
+Just Modern Python¶
+It's all based on standard Python type declarations (thanks to Pydantic). No new syntax to learn. Just standard modern Python.
+
+If you need a 2 minute refresher of how to use Python types (even if you don't use FastAPI), check the short tutorial: Python Types.
+
+You write standard Python with types:
+
+
+from datetime import date
+
+from pydantic import BaseModel
+
+# Declare a variable as a str
+# and get editor support inside the function
+def main(user_id: str):
+    return user_id
+
+
+# A Pydantic model
+class User(BaseModel):
+    id: int
+    name: str
+    joined: date
+That can then be used like:
+
+
+my_user: User = User(id=3, name="John Doe", joined="2018-07-19")
+
+second_user_data = {
+    "id": 4,
+    "name": "Mary",
+    "joined": "2018-11-30",
+}
+
+my_second_user: User = User(**second_user_data)
+Note
+
+**second_user_data means:
+
+Pass the keys and values of the second_user_data dict directly as key-value arguments, equivalent to: User(id=4, name="Mary", joined="2018-11-30")
+
+Editor support¶
+The whole framework was designed to be easy and intuitive to use, all the decisions were tested on multiple editors even before starting development, to ensure the best development experience.
+
+In the Python developer surveys, it's clear that one of the most used features is "autocompletion".
+
+The whole FastAPI framework is designed to satisfy that. Autocompletion works everywhere.
+
+You will rarely need to come back to the docs.
+
+Here's how your editor might help you:
+
+in Visual Studio Code:
+editor support
+
+in PyCharm:
+editor support
+
+You will get completion in code you might even consider impossible before. As for example, the price key inside a JSON body (that could have been nested) that comes from a request.
+
+No more typing the wrong key names, coming back and forth between docs, or scrolling up and down to find if you finally used username or user_name.
+
+Short¶
+It has sensible defaults for everything, with optional configurations everywhere. All the parameters can be fine-tuned to do what you need and to define the API you need.
+
+But by default, it all "just works".
+
+Validation¶
+Validation for most (or all?) Python data types, including:
+
+JSON objects (dict).
+JSON array (list) defining item types.
+String (str) fields, defining min and max lengths.
+Numbers (int, float) with min and max values, etc.
+Validation for more exotic types, like:
+
+URL.
+Email.
+UUID.
+...and others.
+All the validation is handled by the well-established and robust Pydantic.
+
+Security and authentication¶
+Security and authentication integrated. Without any compromise with databases or data models.
+
+All the security schemes defined in OpenAPI, including:
+
+HTTP Basic.
+OAuth2 (also with JWT tokens). Check the tutorial on OAuth2 with JWT.
+API keys in:
+Headers.
+Query parameters.
+Cookies, etc.
+Plus all the security features from Starlette (including session cookies).
+
+All built as reusable tools and components that are easy to integrate with your systems, data stores, relational and NoSQL databases, etc.
+
+Dependency Injection¶
+FastAPI includes an extremely easy to use, but extremely powerful Dependency Injection system.
+
+Even dependencies can have dependencies, creating a hierarchy or "graph" of dependencies.
+All automatically handled by the framework.
+All the dependencies can require data from requests and augment the path operation constraints and automatic documentation.
+Automatic validation even for path operation parameters defined in dependencies.
+Support for complex user authentication systems, database connections, etc.
+No compromise with databases, frontends, etc. But easy integration with all of them.
+Unlimited "plug-ins"¶
+Or, in other words, no need for them, import and use the code you need.
+
+Any integration is designed to be so simple to use (with dependencies) that you can create a "plug-in" for your application in 2 lines of code using the same structure and syntax used for your path operations.
+
+Tested¶
+100% test coverage.
+100% type annotated code base.
+Used in production applications.
+Starlette features¶
+FastAPI is fully compatible with (and based on) Starlette. So, any additional Starlette code you have, will also work.
+
+FastAPI is actually a sub-class of Starlette. So, if you already know or use Starlette, most of the functionality will work the same way.
+
+With FastAPI you get all of Starlette's features (as FastAPI is just Starlette on steroids):
+
+Seriously impressive performance. It is one of the fastest Python frameworks available, on par with NodeJS and Go.
+WebSocket support.
+In-process background tasks.
+Startup and shutdown events.
+Test client built on HTTPX.
+CORS, GZip, Static Files, Streaming responses.
+Session and Cookie support.
+100% test coverage.
+100% type annotated codebase.
+Pydantic features¶
+FastAPI is fully compatible with (and based on) Pydantic. So, any additional Pydantic code you have, will also work.
+
+Including external libraries also based on Pydantic, such as ORMs and ODMs for databases.
+
+This also means that in many cases you can pass the same object you get from a request directly to the database, as everything is validated automatically.
+
+The same applies the other way around, in many cases you can just pass the object you get from the database directly to the client.
+
+With FastAPI you get all of Pydantic's features (as FastAPI is based on Pydantic for all the data handling):
+
+No brainfuck:
+No new schema definition micro-language to learn.
+If you know Python types you know how to use Pydantic.
+Plays nicely with your IDE/linter/brain:
+Because pydantic data structures are just instances of classes you define; auto-completion, linting, mypy and your intuition should all work properly with your validated data.
+Validate complex structures:
+Use of hierarchical Pydantic models, Python typing’s List and Dict, etc.
+And validators allow complex data schemas to be clearly and easily defined, checked and documented as JSON Schema.
+You can have deeply nested JSON objects and have them all validated and annotated.
+Extensible:
+Pydantic allows custom data types to be defined or you can extend validation with methods on a model decorated with the validator decorator.
+100% test coverage.Alternatives, Inspiration and Comparisons¶
+What inspired FastAPI, how it compares to alternatives and what it learned from them.
+
+Intro¶
+FastAPI wouldn't exist if not for the previous work of others.
+
+There have been many tools created before that have helped inspire its creation.
+
+I have been avoiding the creation of a new framework for several years. First I tried to solve all the features covered by FastAPI using many different frameworks, plug-ins, and tools.
+
+But at some point, there was no other option than creating something that provided all these features, taking the best ideas from previous tools, and combining them in the best way possible, using language features that weren't even available before (Python 3.6+ type hints).
+
+Previous tools¶
+Django¶
+It's the most popular Python framework and is widely trusted. It is used to build systems like Instagram.
+
+It's relatively tightly coupled with relational databases (like MySQL or PostgreSQL), so, having a NoSQL database (like Couchbase, MongoDB, Cassandra, etc) as the main store engine is not very easy.
+
+It was created to generate the HTML in the backend, not to create APIs used by a modern frontend (like React, Vue.js and Angular) or by other systems (like IoT devices) communicating with it.
+
+Django REST Framework¶
+Django REST Framework was created to be a flexible toolkit for building Web APIs using Django underneath, to improve its API capabilities.
+
+It is used by many companies including Mozilla, Red Hat and Eventbrite.
+
+It was one of the first examples of automatic API documentation, and this was specifically one of the first ideas that inspired "the search for" FastAPI.
+
+Note
+
+Django REST Framework was created by Tom Christie. The same creator of Starlette and Uvicorn, on which FastAPI is based.
+
+Inspired FastAPI to
+
+Have an automatic API documentation web user interface.
+
+Flask¶
+Flask is a "microframework", it doesn't include database integrations nor many of the things that come by default in Django.
+
+This simplicity and flexibility allow doing things like using NoSQL databases as the main data storage system.
+
+As it is very simple, it's relatively intuitive to learn, although the documentation gets somewhat technical at some points.
+
+It is also commonly used for other applications that don't necessarily need a database, user management, or any of the many features that come pre-built in Django. Although many of these features can be added with plug-ins.
+
+This decoupling of parts, and being a "microframework" that could be extended to cover exactly what is needed was a key feature that I wanted to keep.
+
+Given the simplicity of Flask, it seemed like a good match for building APIs. The next thing to find was a "Django REST Framework" for Flask.
+
+Inspired FastAPI to
+
+Be a micro-framework. Making it easy to mix and match the tools and parts needed.
+
+Have a simple and easy to use routing system.
+
+Requests¶
+FastAPI is not actually an alternative to Requests. Their scope is very different.
+
+It would actually be common to use Requests inside of a FastAPI application.
+
+But still, FastAPI got quite some inspiration from Requests.
+
+Requests is a library to interact with APIs (as a client), while FastAPI is a library to build APIs (as a server).
+
+They are, more or less, at opposite ends, complementing each other.
+
+Requests has a very simple and intuitive design, it's very easy to use, with sensible defaults. But at the same time, it's very powerful and customizable.
+
+That's why, as said in the official website:
+
+Requests is one of the most downloaded Python packages of all time
+
+The way you use it is very simple. For example, to do a GET request, you would write:
+
+
+response = requests.get("http://example.com/some/url")
+The FastAPI counterpart API path operation could look like:
+
+
+@app.get("/some/url")
+def read_url():
+    return {"message": "Hello World"}
+See the similarities in requests.get(...) and @app.get(...).
+
+Inspired FastAPI to
+
+Have a simple and intuitive API.
+Use HTTP method names (operations) directly, in a straightforward and intuitive way.
+Have sensible defaults, but powerful customizations.
+Swagger / OpenAPI¶
+The main feature I wanted from Django REST Framework was the automatic API documentation.
+
+Then I found that there was a standard to document APIs, using JSON (or YAML, an extension of JSON) called Swagger.
+
+And there was a web user interface for Swagger APIs already created. So, being able to generate Swagger documentation for an API would allow using this web user interface automatically.
+
+At some point, Swagger was given to the Linux Foundation, to be renamed OpenAPI.
+
+That's why when talking about version 2.0 it's common to say "Swagger", and for version 3+ "OpenAPI".
+
+Inspired FastAPI to
+
+Adopt and use an open standard for API specifications, instead of a custom schema.
+
+And integrate standards-based user interface tools:
+
+Swagger UI
+ReDoc
+These two were chosen for being fairly popular and stable, but doing a quick search, you could find dozens of alternative user interfaces for OpenAPI (that you can use with FastAPI).
+
+Flask REST frameworks¶
+There are several Flask REST frameworks, but after investing the time and work into investigating them, I found that many are discontinued or abandoned, with several standing issues that made them unfit.
+
+Marshmallow¶
+One of the main features needed by API systems is data "serialization" which is taking data from the code (Python) and converting it into something that can be sent through the network. For example, converting an object containing data from a database into a JSON object. Converting datetime objects into strings, etc.
+
+Another big feature needed by APIs is data validation, making sure that the data is valid, given certain parameters. For example, that some field is an int, and not some random string. This is especially useful for incoming data.
+
+Without a data validation system, you would have to do all the checks by hand, in code.
+
+These features are what Marshmallow was built to provide. It is a great library, and I have used it a lot before.
+
+But it was created before there existed Python type hints. So, to define every schema you need to use specific utils and classes provided by Marshmallow.
+
+Inspired FastAPI to
+
+Use code to define "schemas" that provide data types and validation, automatically.
+
+Webargs¶
+Another big feature required by APIs is parsing data from incoming requests.
+
+Webargs is a tool that was made to provide that on top of several frameworks, including Flask.
+
+It uses Marshmallow underneath to do the data validation. And it was created by the same developers.
+
+It's a great tool and I have used it a lot too, before having FastAPI.
+
+Note
+
+Webargs was created by the same Marshmallow developers.
+
+Inspired FastAPI to
+
+Have automatic validation of incoming request data.
+
+APISpec¶
+Marshmallow and Webargs provide validation, parsing and serialization as plug-ins.
+
+But documentation is still missing. Then APISpec was created.
+
+It is a plug-in for many frameworks (and there's a plug-in for Starlette too).
+
+The way it works is that you write the definition of the schema using YAML format inside the docstring of each function handling a route.
+
+And it generates OpenAPI schemas.
+
+That's how it works in Flask, Starlette, Responder, etc.
+
+But then, we have again the problem of having a micro-syntax, inside of a Python string (a big YAML).
+
+The editor can't help much with that. And if we modify parameters or Marshmallow schemas and forget to also modify that YAML docstring, the generated schema would be obsolete.
+
+Note
+
+APISpec was created by the same Marshmallow developers.
+
+Inspired FastAPI to
+
+Support the open standard for APIs, OpenAPI.
+
+Flask-apispec¶
+It's a Flask plug-in, that ties together Webargs, Marshmallow and APISpec.
+
+It uses the information from Webargs and Marshmallow to automatically generate OpenAPI schemas, using APISpec.
+
+It's a great tool, very underrated. It should be way more popular than many Flask plug-ins out there. It might be due to its documentation being too concise and abstract.
+
+This solved having to write YAML (another syntax) inside of Python docstrings.
+
+This combination of Flask, Flask-apispec with Marshmallow and Webargs was my favorite backend stack until building FastAPI.
+
+Using it led to the creation of several Flask full-stack generators. These are the main stacks I (and several external teams) have been using up to now:
+
+https://github.com/tiangolo/full-stack
+https://github.com/tiangolo/full-stack-flask-couchbase
+https://github.com/tiangolo/full-stack-flask-couchdb
+And these same full-stack generators were the base of the FastAPI Project Generators.
+
+Note
+
+Flask-apispec was created by the same Marshmallow developers.
+
+Inspired FastAPI to
+
+Generate the OpenAPI schema automatically, from the same code that defines serialization and validation.
+
+NestJS (and Angular)¶
+This isn't even Python, NestJS is a JavaScript (TypeScript) NodeJS framework inspired by Angular.
+
+It achieves something somewhat similar to what can be done with Flask-apispec.
+
+It has an integrated dependency injection system, inspired by Angular 2. It requires pre-registering the "injectables" (like all the other dependency injection systems I know), so, it adds to the verbosity and code repetition.
+
+As the parameters are described with TypeScript types (similar to Python type hints), editor support is quite good.
+
+But as TypeScript data is not preserved after compilation to JavaScript, it cannot rely on the types to define validation, serialization and documentation at the same time. Due to this and some design decisions, to get validation, serialization and automatic schema generation, it's needed to add decorators in many places. So, it becomes quite verbose.
+
+It can't handle nested models very well. So, if the JSON body in the request is a JSON object that has inner fields that in turn are nested JSON objects, it cannot be properly documented and validated.
+
+Inspired FastAPI to
+
+Use Python types to have great editor support.
+
+Have a powerful dependency injection system. Find a way to minimize code repetition.
+
+Sanic¶
+It was one of the first extremely fast Python frameworks based on asyncio. It was made to be very similar to Flask.
+
+Technical Details
+
+It used uvloop instead of the default Python asyncio loop. That's what made it so fast.
+
+It clearly inspired Uvicorn and Starlette, that are currently faster than Sanic in open benchmarks.
+
+Inspired FastAPI to
+
+Find a way to have a crazy performance.
+
+That's why FastAPI is based on Starlette, as it is the fastest framework available (tested by third-party benchmarks).
+
+Falcon¶
+Falcon is another high performance Python framework, it is designed to be minimal, and work as the foundation of other frameworks like Hug.
+
+It is designed to have functions that receive two parameters, one "request" and one "response". Then you "read" parts from the request, and "write" parts to the response. Because of this design, it is not possible to declare request parameters and bodies with standard Python type hints as function parameters.
+
+So, data validation, serialization, and documentation, have to be done in code, not automatically. Or they have to be implemented as a framework on top of Falcon, like Hug. This same distinction happens in other frameworks that are inspired by Falcon's design, of having one request object and one response object as parameters.
+
+Inspired FastAPI to
+
+Find ways to get great performance.
+
+Along with Hug (as Hug is based on Falcon) inspired FastAPI to declare a response parameter in functions.
+
+Although in FastAPI it's optional, and is used mainly to set headers, cookies, and alternative status codes.
+
+Molten¶
+I discovered Molten in the first stages of building FastAPI. And it has quite similar ideas:
+
+Based on Python type hints.
+Validation and documentation from these types.
+Dependency Injection system.
+It doesn't use a data validation, serialization and documentation third-party library like Pydantic, it has its own. So, these data type definitions would not be reusable as easily.
+
+It requires a little bit more verbose configurations. And as it is based on WSGI (instead of ASGI), it is not designed to take advantage of the high performance provided by tools like Uvicorn, Starlette and Sanic.
+
+The dependency injection system requires pre-registration of the dependencies and the dependencies are solved based on the declared types. So, it's not possible to declare more than one "component" that provides a certain type.
+
+Routes are declared in a single place, using functions declared in other places (instead of using decorators that can be placed right on top of the function that handles the endpoint). This is closer to how Django does it than to how Flask (and Starlette) does it. It separates in the code things that are relatively tightly coupled.
+
+Inspired FastAPI to
+
+Define extra validations for data types using the "default" value of model attributes. This improves editor support, and it was not available in Pydantic before.
+
+This actually inspired updating parts of Pydantic, to support the same validation declaration style (all this functionality is now already available in Pydantic).
+
+Hug¶
+Hug was one of the first frameworks to implement the declaration of API parameter types using Python type hints. This was a great idea that inspired other tools to do the same.
+
+It used custom types in its declarations instead of standard Python types, but it was still a huge step forward.
+
+It also was one of the first frameworks to generate a custom schema declaring the whole API in JSON.
+
+It was not based on a standard like OpenAPI and JSON Schema. So it wouldn't be straightforward to integrate it with other tools, like Swagger UI. But again, it was a very innovative idea.
+
+It has an interesting, uncommon feature: using the same framework, it's possible to create APIs and also CLIs.
+
+As it is based on the previous standard for synchronous Python web frameworks (WSGI), it can't handle Websockets and other things, although it still has high performance too.
+
+Note
+
+Hug was created by Timothy Crosley, the same creator of isort, a great tool to automatically sort imports in Python files.
+
+Ideas inspiring FastAPI
+
+Hug inspired parts of APIStar, and was one of the tools I found most promising, alongside APIStar.
+
+Hug helped inspire FastAPI to use Python type hints to declare parameters, and to generate a schema defining the API automatically.
+
+Hug inspired FastAPI to declare a response parameter in functions to set headers and cookies.
+
+APIStar (<= 0.5)¶
+Right before deciding to build FastAPI I found APIStar server. It had almost everything I was looking for and had a great design.
+
+It was one of the first implementations of a framework using Python type hints to declare parameters and requests that I ever saw (before NestJS and Molten). I found it more or less at the same time as Hug. But APIStar used the OpenAPI standard.
+
+It had automatic data validation, data serialization and OpenAPI schema generation based on the same type hints in several places.
+
+Body schema definitions didn't use the same Python type hints like Pydantic, it was a bit more similar to Marshmallow, so, editor support wouldn't be as good, but still, APIStar was the best available option.
+
+It had the best performance benchmarks at the time (only surpassed by Starlette).
+
+At first, it didn't have an automatic API documentation web UI, but I knew I could add Swagger UI to it.
+
+It had a dependency injection system. It required pre-registration of components, as other tools discussed above. But still, it was a great feature.
+
+I was never able to use it in a full project, as it didn't have security integration, so, I couldn't replace all the features I was having with the full-stack generators based on Flask-apispec. I had in my backlog of projects to create a pull request adding that functionality.
+
+But then, the project's focus shifted.
+
+It was no longer an API web framework, as the creator needed to focus on Starlette.
+
+Now APIStar is a set of tools to validate OpenAPI specifications, not a web framework.
+
+Note
+
+APIStar was created by Tom Christie. The same guy that created:
+
+Django REST Framework
+Starlette (on which FastAPI is based)
+Uvicorn (used by Starlette and FastAPI)
+Inspired FastAPI to
+
+Exist.
+
+The idea of declaring multiple things (data validation, serialization and documentation) with the same Python types, that at the same time provided great editor support, was something I considered a brilliant idea.
+
+And after searching for a long time for a similar framework and testing many different alternatives, APIStar was the best option available.
+
+Then APIStar stopped existing as a server and Starlette was created, and was a new better foundation for such a system. That was the final inspiration to build FastAPI.
+
+I consider FastAPI a "spiritual successor" to APIStar, while improving and increasing the features, typing system, and other parts, based on the learnings from all these previous tools.
+
+Used by FastAPI¶
+Pydantic¶
+Pydantic is a library to define data validation, serialization and documentation (using JSON Schema) based on Python type hints.
+
+That makes it extremely intuitive.
+
+It is comparable to Marshmallow. Although it's faster than Marshmallow in benchmarks. And as it is based on the same Python type hints, the editor support is great.
+
+FastAPI uses it to
+
+Handle all the data validation, data serialization and automatic model documentation (based on JSON Schema).
+
+FastAPI then takes that JSON Schema data and puts it in OpenAPI, apart from all the other things it does.
+
+Starlette¶
+Starlette is a lightweight ASGI framework/toolkit, which is ideal for building high-performance asyncio services.
+
+It is very simple and intuitive. It's designed to be easily extensible, and have modular components.
+
+It has:
+
+Seriously impressive performance.
+WebSocket support.
+In-process background tasks.
+Startup and shutdown events.
+Test client built on HTTPX.
+CORS, GZip, Static Files, Streaming responses.
+Session and Cookie support.
+100% test coverage.
+100% type annotated codebase.
+Few hard dependencies.
+Starlette is currently the fastest Python framework tested. Only surpassed by Uvicorn, which is not a framework, but a server.
+
+Starlette provides all the basic web microframework functionality.
+
+But it doesn't provide automatic data validation, serialization or documentation.
+
+That's one of the main things that FastAPI adds on top, all based on Python type hints (using Pydantic). That, plus the dependency injection system, security utilities, OpenAPI schema generation, etc.
+
+Technical Details
+
+ASGI is a new "standard" being developed by Django core team members. It is still not a "Python standard" (a PEP), although they are in the process of doing that.
+
+Nevertheless, it is already being used as a "standard" by several tools. This greatly improves interoperability, as you could switch Uvicorn for any other ASGI server (like Daphne or Hypercorn), or you could add ASGI compatible tools, like python-socketio.
+
+FastAPI uses it to
+
+Handle all the core web parts. Adding features on top.
+
+The class FastAPI itself inherits directly from the class Starlette.
+
+So, anything that you can do with Starlette, you can do it directly with FastAPI, as it is basically Starlette on steroids.
+
+Uvicorn¶
+Uvicorn is a lightning-fast ASGI server, built on uvloop and httptools.
+
+It is not a web framework, but a server. For example, it doesn't provide tools for routing by paths. That's something that a framework like Starlette (or FastAPI) would provide on top.
+
+It is the recommended server for Starlette and FastAPI.
+
+FastAPI recommends it as
+
+The main web server to run FastAPI applications.
+
+You can also use the --workers command line option to have an asynchronous multi-process server.
+
+Check more details in the Deployment section.
+
+Benchmarks and speed¶
+To understand, compare, and see the difference between Uvicorn, Starlette and FastAPI, check the section about Benchmarks.History, Design and Future¶
+Some time ago, a FastAPI user asked:
+
+What’s the history of this project? It seems to have come from nowhere to awesome in a few weeks [...]
+
+Here's a little bit of that history.
+
+Alternatives¶
+I have been creating APIs with complex requirements for several years (Machine Learning, distributed systems, asynchronous jobs, NoSQL databases, etc), leading several teams of developers.
+
+As part of that, I needed to investigate, test and use many alternatives.
+
+The history of FastAPI is in great part the history of its predecessors.
+
+As said in the section Alternatives:
+
+FastAPI wouldn't exist if not for the previous work of others.
+
+There have been many tools created before that have helped inspire its creation.
+
+I have been avoiding the creation of a new framework for several years. First I tried to solve all the features covered by FastAPI using many different frameworks, plug-ins, and tools.
+
+But at some point, there was no other option than creating something that provided all these features, taking the best ideas from previous tools, and combining them in the best way possible, using language features that weren't even available before (Python 3.6+ type hints).
+
+Investigation¶
+By using all the previous alternatives I had the chance to learn from all of them, take ideas, and combine them in the best way I could find for myself and the teams of developers I have worked with.
+
+For example, it was clear that ideally it should be based on standard Python type hints.
+
+Also, the best approach was to use already existing standards.
+
+So, before even starting to code FastAPI, I spent several months studying the specs for OpenAPI, JSON Schema, OAuth2, etc. Understanding their relationship, overlap, and differences.
+
+Design¶
+Then I spent some time designing the developer "API" I wanted to have as a user (as a developer using FastAPI).
+
+I tested several ideas in the most popular Python editors: PyCharm, VS Code, Jedi based editors.
+
+By the last Python Developer Survey, that covers about 80% of the users.
+
+It means that FastAPI was specifically tested with the editors used by 80% of the Python developers. And as most of the other editors tend to work similarly, all its benefits should work for virtually all editors.
+
+That way I could find the best ways to reduce code duplication as much as possible, to have completion everywhere, type and error checks, etc.
+
+All in a way that provided the best development experience for all the developers.
+
+Requirements¶
+After testing several alternatives, I decided that I was going to use Pydantic for its advantages.
+
+Then I contributed to it, to make it fully compliant with JSON Schema, to support different ways to define constraint declarations, and to improve editor support (type checks, autocompletion) based on the tests in several editors.
+
+During the development, I also contributed to Starlette, the other key requirement.
+
+Development¶
+By the time I started creating FastAPI itself, most of the pieces were already in place, the design was defined, the requirements and tools were ready, and the knowledge about the standards and specifications was clear and fresh.
+
+Future¶
+By this point, it's already clear that FastAPI with its ideas is being useful for many people.
+
+It is being chosen over previous alternatives for suiting many use cases better.
+
+Many developers and teams already depend on FastAPI for their projects (including me and my team).
+
+But still, there are many improvements and features to come.
+
+FastAPI has a great future ahead.
+
+And your help is greatly appreciated.Benchmarks¶
+Independent TechEmpower benchmarks show FastAPI applications running under Uvicorn as one of the fastest Python frameworks available, only below Starlette and Uvicorn themselves (used internally by FastAPI).
+
+But when checking benchmarks and comparisons you should keep the following in mind.
+
+Benchmarks and speed¶
+When you check the benchmarks, it is common to see several tools of different types compared as equivalent.
+
+Specifically, to see Uvicorn, Starlette and FastAPI compared together (among many other tools).
+
+The simpler the problem solved by the tool, the better performance it will get. And most of the benchmarks don't test the additional features provided by the tool.
+
+The hierarchy is like:
+
+Uvicorn: an ASGI server
+
+Starlette: (uses Uvicorn) a web microframework
+FastAPI: (uses Starlette) an API microframework with several additional features for building APIs, with data validation, etc.
+Uvicorn:
+
+Will have the best performance, as it doesn't have much extra code apart from the server itself.
+You wouldn't write an application in Uvicorn directly. That would mean that your code would have to include more or less, at least, all the code provided by Starlette (or FastAPI). And if you did that, your final application would have the same overhead as having used a framework and minimizing your app code and bugs.
+If you are comparing Uvicorn, compare it against Daphne, Hypercorn, uWSGI, etc. Application servers.
+Starlette:
+Will have the next best performance, after Uvicorn. In fact, Starlette uses Uvicorn to run. So, it probably can only get "slower" than Uvicorn by having to execute more code.
+But it provides you the tools to build simple web applications, with routing based on paths, etc.
+If you are comparing Starlette, compare it against Sanic, Flask, Django, etc. Web frameworks (or microframeworks).
+FastAPI:
+The same way that Starlette uses Uvicorn and cannot be faster than it, FastAPI uses Starlette, so it cannot be faster than it.
+FastAPI provides more features on top of Starlette. Features that you almost always need when building APIs, like data validation and serialization. And by using it, you get automatic documentation for free (the automatic documentation doesn't even add overhead to running applications, it is generated on startup).
+If you didn't use FastAPI and used Starlette directly (or another tool, like Sanic, Flask, Responder, etc) you would have to implement all the data validation and serialization yourself. So, your final application would still have the same overhead as if it was built using FastAPI. And in many cases, this data validation and serialization is the biggest amount of code written in applications.
+So, by using FastAPI you are saving development time, bugs, lines of code, and you would probably get the same performance (or better) you would if you didn't use it (as you would have to implement it all in your code).
+If you are comparing FastAPI, compare it against a web application framework (or set of tools) that provides data validation, serialization and documentation, like Flask-apispec, NestJS, Molten, etc. Frameworks with integrated automatic data validation, serialization and documentation.Repository Management¶
+Here's a short description of how the FastAPI repository is managed and maintained.
+
+Owner¶
+I, @tiangolo, am the creator and owner of the FastAPI repository. 🤓
+
+I normally give the final review to each PR before merging them. I make the final decisions on the project, I'm the BDFL. 😅
+
+Team¶
+There's a team of people that help manage and maintain the project. 😎
+
+Learn more about it in tiangolo.com - GitHub FastAPI.
+
+
+Security - First Steps¶
+Let's imagine that you have your backend API in some domain.
+And you have a frontend in another domain or in a different path of the same domain (or in a mobile application).
+And you want to have a way for the frontend to authenticate with the backend, using a username and password.
+We can use OAuth2 to build that with FastAPI.
+But let's save you the time of reading the full long specification just to find those little pieces of information you need.
+Let's use the tools provided by FastAPI to handle security.
+How it looks¶
+Let's first just use the code and see how it works, and then we'll come back to understand what's happening.
+Create main.py¶
+Copy the example in a file main.py:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
+Run it¶
+Note
+The python-multipart package is automatically installed with FastAPI when you run the uv add "fastapi[standard]" command.
+However, if you use the uv add fastapi command, the python-multipart package is not included by default.
+To install it manually, add it to your project with:
+$ uv add python-multipart
+This is because OAuth2 uses "form data" for sending the username and password.
+Run the example with:
+uv run fastapi dev
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+
+Check it¶
+Go to the interactive docs at: http://127.0.0.1:8000/docs.
+You will see something like this:
+Authorize button!
+You already have a shiny new "Authorize" button.
+And your path operation has a little lock in the top-right corner that you can click.
+And if you click it, you have a little authorization form to type a username and password (and other optional fields):
+Note
+It doesn't matter what you type in the form, it won't work yet. But we'll get there.
+This is of course not the frontend for the final users, but it's a great automatic tool to document interactively all your API.
+It can be used by the frontend team (that can also be yourself).
+It can be used by third party applications and systems.
+And it can also be used by yourself, to debug, check and test the same application.
+The password flow¶
+Now let's go back a bit and understand what all that is.
+The password "flow" is one of the ways ("flows") defined in OAuth2, to handle security and authentication.
+OAuth2 was designed so that the backend or API could be independent of the server that authenticates the user.
+But in this case, the same FastAPI application will handle the API and the authentication.
+So, let's review it from that simplified point of view:
+The user types the username and password in the frontend, and hits Enter.
+The frontend (running in the user's browser) sends that username and password to a specific URL in our API (declared with tokenUrl="token").
+The API checks that username and password, and responds with a "token" (we haven't implemented any of this yet).
+A "token" is just a string with some content that we can use later to verify this user.
+Normally, a token is set to expire after some time.
+So, the user will have to log in again at some point later.
+And if the token is stolen, the risk is less. It is not like a permanent key that will work forever (in most of the cases).
+The frontend stores that token temporarily somewhere.
+The user clicks in the frontend to go to another section of the frontend web app.
+The frontend needs to fetch some more data from the API.
+But it needs authentication for that specific endpoint.
+So, to authenticate with our API, it sends a header Authorization with a value of Bearer plus the token.
+If the token contains foobar, the content of the Authorization header would be: Bearer foobar.
+FastAPI's OAuth2PasswordBearer¶
+FastAPI provides several tools, at different levels of abstraction, to implement these security features.
+In this example we are going to use OAuth2, with the Password flow, using a Bearer token. We do that using the OAuth2PasswordBearer class.
+Note
+A "bearer" token is not the only option.
+But it's the best one for our use case.
+And it might be the best for most use cases, unless you are an OAuth2 expert and know exactly why there's another option that better suits your needs.
+In that case, FastAPI also provides you with the tools to build it.
+When we create an instance of the OAuth2PasswordBearer class we pass in the tokenUrl parameter. This parameter contains the URL that the client (the frontend running in the user's browser) will use to send the username and password in order to get a token.
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
+Tip
+Here tokenUrl="token" refers to a relative URL token that we haven't created yet. As it's a relative URL, it's equivalent to ./token.
+Because we are using a relative URL, if your API was located at https://example.com/, then it would refer to https://example.com/token. But if your API was located at https://example.com/api/v1/, then it would refer to https://example.com/api/v1/token.
+Using a relative URL is important to make sure your application keeps working even in an advanced use case like Behind a Proxy.
+This parameter doesn't create that endpoint / path operation, but declares that the URL /token will be the one that the client should use to get the token. That information is used in OpenAPI, and then in the interactive API documentation systems.
+We will soon also create the actual path operation.
+Note
+If you are a very strict "Pythonista" you might dislike the style of the parameter name tokenUrl instead of token_url.
+That's because it is using the same name as in the OpenAPI spec. So that if you need to investigate more about any of these security schemes you can just copy and paste it to find more information about it.
+The oauth2_scheme variable is an instance of OAuth2PasswordBearer, but it is also a "callable".
+It could be called as:
+oauth2_scheme(some, parameters)
+So, it can be used with Depends.
+Use it¶
+Now you can pass that oauth2_scheme in a dependency with Depends.
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
+This dependency will provide a str that is assigned to the parameter token of the path operation function.
+FastAPI will know that it can use this dependency to define a "security scheme" in the OpenAPI schema (and the automatic API docs).
+Technical Details
+FastAPI will know that it can use the class OAuth2PasswordBearer (declared in a dependency) to define the security scheme in OpenAPI because it inherits from fastapi.security.oauth2.OAuth2, which in turn inherits from fastapi.security.base.SecurityBase.
+All the security utilities that integrate with OpenAPI (and the automatic API docs) inherit from SecurityBase, that's how FastAPI can know how to integrate them in OpenAPI.
+What it does¶
+It will go and look in the request for that Authorization header, check if the value is Bearer plus some token, and will return the token as a str.
+If it doesn't see an Authorization header, or the value doesn't have a Bearer token, it will respond with a 401 status code error (UNAUTHORIZED) directly.
+You don't even have to check if the token exists to return an error. You can be sure that if your function is executed, it will have a str in that token.
+You can try it already in the interactive docs:
+We are not verifying the validity of the token yet, but that's a start already.
+Recap¶
+So, in just 3 or 4 extra lines, you already have some primitive form of security.Get Current User¶
+In the previous chapter the security system (which is based on the dependency injection system) was giving the path operation function a token as a str:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get("/items/")
+async def read_items(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
+But that is still not that useful.
+Let's make it give us the current user.
+Create a user model¶
+First, let's create a Pydantic user model.
+The same way we use Pydantic to declare bodies, we can use it anywhere else:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
+Create a get_current_user dependency¶
+Let's create a dependency get_current_user.
+Remember that dependencies can have sub-dependencies?
+get_current_user will have a dependency with the same oauth2_scheme we created before.
+The same as we were doing before in the path operation directly, our new dependency get_current_user will receive a token as a str from the sub-dependency oauth2_scheme:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
+Get the user¶
+get_current_user will use a (fake) utility function we created, that takes a token as a str and returns our Pydantic User model:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
+Inject the current user¶
+So now we can use the same Depends with our get_current_user in the path operation:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
+Notice that we declare the type of current_user as the Pydantic model User.
+This will help us inside of the function with all the completion and type checks.
+Tip
+You might remember that request bodies are also declared with Pydantic models.
+Here FastAPI won't get confused because you are using Depends.
+Tip
+The way this dependency system is designed allows us to have different dependencies (different "dependables") that all return a User model.
+We are not restricted to having only one dependency that can return that type of data.
+Other models¶
+You can now get the current user directly in the path operation functions and deal with the security mechanisms at the Dependency Injection level, using Depends.
+And you can use any model or data for the security requirements (in this case, a Pydantic model User).
+But you are not restricted to using some specific data model, class or type.
+Do you want to have an id and email and not have any username in your model? Sure. You can use these same tools.
+Do you want to just have a str? Or just a dict? Or a database class model instance directly? It all works the same way.
+You actually don't have users that log in to your application but robots, bots, or other systems, that have just an access token? Again, it all works the same.
+Just use any kind of model, any kind of class, any kind of database that you need for your application. FastAPI has you covered with the dependency injection system.
+Code size¶
+This example might seem verbose. Keep in mind that we are mixing security, data models, utility functions and path operations in the same file.
+But here's the key point.
+The security and dependency injection stuff is written once.
+And you can make it as complex as you want. And still, have it written only once, in a single place. With all the flexibility.
+But you can have thousands of endpoints (path operations) using the same security system.
+And all of them (or any portion of them that you want) can take advantage of re-using these dependencies or any other dependencies you create.
+And all these thousands of path operations can be as small as 3 lines:
+Python 3.10+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return current_user
+🤓 Other versions and variants
+Python 3.10+ - non-Annotated
+Tip
+Prefer to use the Annotated version if possible.
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+def fake_decode_token(token):
+    return User(
+        username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+    )
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
+Recap¶
+You can now get the current user directly in your path operation function.
+We are already halfway there.
+We just need to add a path operation for the user/client to actually send the username and password.
+That coSimple OAuth2 with Password and Bearer¶
+Now let's build from the previous chapter and add the missing parts to have a complete security flow.
+
+Get the username and password¶
+We are going to use FastAPI security utilities to get the username and password.
+
+OAuth2 specifies that when using the "password flow" (that we are using) the client/user must send username and password fields as form data.
+
+And the spec says that the fields have to be named like that. So user-name or email wouldn't work.
+
+But don't worry, you can show it as you wish to your final users in the frontend.
+
+And your database models can use any other names you want.
+
+But for the login path operation, we need to use these names to be compatible with the spec (and be able to, for example, use the integrated API documentation system).
+
+The spec also states that the username and password must be sent as form data (so, no JSON here).
+
+scope¶
+The spec also says that the client can send another form field "scope".
+
+The form field name is scope (in singular), but it is actually a long string with "scopes" separated by spaces.
+
+Each "scope" is just a string (without spaces).
+
+They are normally used to declare specific security permissions, for example:
+
+users:read or users:write are common examples.
+instagram_basic is used by Facebook / Instagram.
+https://www.googleapis.com/auth/drive is used by Google.
+Note
+
+In OAuth2 a "scope" is just a string that declares a specific permission required.
+
+It doesn't matter if it has other characters like : or if it is a URL.
+
+Those details are implementation specific.
+
+For OAuth2 they are just strings.
+
+Code to get the username and password¶
+Now let's use the utilities provided by FastAPI to handle this.
+
+OAuth2PasswordRequestForm¶
+First, import OAuth2PasswordRequestForm, and use it as a dependency with Depends in the path operation for /token:
+
+
+Python 3.10+
+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
+
+app = FastAPI()
+
+
+def fake_hash_password(password: str):
+    return "fakehashed" + password
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
+
+🤓 Other versions and variants
+OAuth2PasswordRequestForm is a class dependency that declares a form body with:
+
+The username.
+The password.
+An optional scope field as a big string, composed of strings separated by spaces.
+An optional grant_type.
+Tip
+
+The OAuth2 spec actually requires a field grant_type with a fixed value of password, but OAuth2PasswordRequestForm doesn't enforce it.
+
+If you need to enforce it, use OAuth2PasswordRequestFormStrict instead of OAuth2PasswordRequestForm.
+
+An optional client_id (we don't need it for our example).
+An optional client_secret (we don't need it for our example).
+Note
+
+The OAuth2PasswordRequestForm is not a special class for FastAPI as is OAuth2PasswordBearer.
+
+OAuth2PasswordBearer makes FastAPI know that it is a security scheme. So it is added that way to OpenAPI.
+
+But OAuth2PasswordRequestForm is just a class dependency that you could have written yourself, or you could have declared Form parameters directly.
+
+But as it's a common use case, it is provided by FastAPI directly, just to make it easier.
+
+Use the form data¶
+Tip
+
+The instance of the dependency class OAuth2PasswordRequestForm won't have an attribute scope with the long string separated by spaces, instead, it will have a scopes attribute with the actual list of strings for each scope sent.
+
+We are not using scopes in this example, but the functionality is there if you need it.
+
+Now, get the user data from the (fake) database, using the username from the form field.
+
+If there is no such user, we return an error saying "Incorrect username or password".
+
+For the error, we use the exception HTTPException:
+
+
+Python 3.10+
+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
+
+app = FastAPI()
+
+
+def fake_hash_password(password: str):
+    return "fakehashed" + password
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
+
+🤓 Other versions and variants
+Check the password¶
+At this point we have the user data from our database, but we haven't checked the password.
+
+Let's put that data in the Pydantic UserInDB model first.
+
+You should never save plaintext passwords, so, we'll use the (fake) password hashing system.
+
+If the passwords don't match, we return the same error.
+
+Password hashing¶
+"Hashing" means: converting some content (a password in this case) into a sequence of bytes (just a string) that looks like gibberish.
+
+Whenever you pass exactly the same content (exactly the same password) you get exactly the same gibberish.
+
+But you cannot convert from the gibberish back to the password.
+
+Why use password hashing¶
+If your database is stolen, the thief won't have your users' plaintext passwords, only the hashes.
+
+So, the thief won't be able to try to use those same passwords in another system (as many users use the same password everywhere, this would be dangerous).
+
+
+Python 3.10+
+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
+
+app = FastAPI()
+
+
+def fake_hash_password(password: str):
+    return "fakehashed" + password
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
+
+🤓 Other versions and variants
+About **user_dict¶
+UserInDB(**user_dict) means:
+
+Pass the keys and values of the user_dict directly as key-value arguments, equivalent to:
+
+
+UserInDB(
+    username = user_dict["username"],
+    email = user_dict["email"],
+    full_name = user_dict["full_name"],
+    disabled = user_dict["disabled"],
+    hashed_password = user_dict["hashed_password"],
+)
+Note
+
+For a more complete explanation of **user_dict check back in the documentation for Extra Models.
+
+Return the token¶
+The response of the token endpoint must be a JSON object.
+
+It should have a token_type. In our case, as we are using "Bearer" tokens, the token type should be "bearer".
+
+And it should have an access_token, with a string containing our access token.
+
+For this simple example, we are going to just be completely insecure and return the same username as the token.
+
+Tip
+
+In the next chapter, you will see a real secure implementation, with password hashing and JWT tokens.
+
+But for now, let's focus on the specific details we need.
+
+
+Python 3.10+
+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
+
+app = FastAPI()
+
+
+def fake_hash_password(password: str):
+    return "fakehashed" + password
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
+
+🤓 Other versions and variants
+Tip
+
+By the spec, you should return a JSON with an access_token and a token_type, the same as in this example.
+
+This is something that you have to do yourself in your code, and make sure you use those JSON keys.
+
+It's almost the only thing that you have to remember to do correctly yourself, to be compliant with the specifications.
+
+For the rest, FastAPI handles it for you.
+
+Update the dependencies¶
+Now we are going to update our dependencies.
+
+We want to get the current_user only if this user is active.
+
+So, we create an additional dependency get_current_active_user that in turn uses get_current_user as a dependency.
+
+Both of these dependencies will just return an HTTP error if the user doesn't exist, or is inactive.
+
+So, in our endpoint, we will only get a user if the user exists, was correctly authenticated, and is active:
+
+
+Python 3.10+
+
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
+
+app = FastAPI()
+
+
+def fake_hash_password(password: str):
+    return "fakehashed" + password
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class User(BaseModel):
+    username: str
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
+
+🤓 Other versions and variants
+Note
+
+The additional header WWW-Authenticate with value Bearer we are returning here is also part of the spec.
+
+Any HTTP (error) status code 401 "UNAUTHORIZED" is supposed to also return a WWW-Authenticate header.
+
+In the case of bearer tokens (our case), the value of that header should be Bearer.
+
+You can actually skip that extra header and it would still work.
+
+But it's provided here to be compliant with the specifications.
+
+Also, there might be tools that expect and use it (now or in the future) and that might be useful for you or your users, now or in the future.
+
+That's the benefit of standards...
+
+See it in action¶
+Open the interactive docs: http://127.0.0.1:8000/docs.
+
+Authenticate¶
+Click the "Authorize" button.
+
+Use the credentials:
+
+User: johndoe
+
+Password: secret
+
+
+
+After authenticating in the system, you will see it like:
+
+
+
+Get your own user data¶
+Now use the operation GET with the path /users/me.
+
+You will get your user's data, like:
+
+
+{
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "full_name": "John Doe",
+  "disabled": false,
+  "hashed_password": "fakehashedsecret"
+}
+
+
+If you click the lock icon and logout, and then try the same operation again, you will get an HTTP 401 error of:
+
+
+{
+  "detail": "Not authenticated"
+}
+Inactive user¶
+Now try with an inactive user, authenticate with:
+
+User: alice
+
+Password: secret2
+
+And try to use the operation GET with the path /users/me.
+
+You will get an "Inactive user" error, like:
+
+
+{
+  "detail": "Inactive user"
+}
+Recap¶
+You now have the tools to implement a complete security system based on username and password for your API.
+
+Using these tools, you can make the security system compatible with any database and with any user or data model.
+
+The only detail missing is that it is not actually "secure" yet.
+
+In the next chapter you'll see how to use a secure password hashing library and JWT tokens.mes next.
+
+FastAPI Architecture
+Last Updated :
+23 Jul, 2025
+FastAPI is a cutting-edge Python web framework that simplifies the process of building robust REST APIs. In this article, we will explore the fundamental aspects of architecture by delving into its core components.
+
+What is FastAPI?
+FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints. It is designed to be easy to use, efficient, and reliable, making it a popular choice for developing RESTful APIs and web applications. FastAPI has gained popularity due to its simplicity, automatic documentation generation, and excellent performance.
+
+Features of FastAPI
+Type Safety and Validation: FastAPI uses Python type hints and Pydantic models for automatic data validation and serialization. This results in type-safe APIs where you catch errors at compile time rather than runtime.
+Fast Performance: FastAPI is one of the fastest web frameworks available. It performs at speeds comparable to Node.js and Go frameworks due to its efficient use of modern Python features.
+Automatic Interactive API Documentation: FastAPI automatically generates interactive API documentation (Swagger UI and ReDoc) based on your code's type hints and Pydantic models. This means you get documentation that is always in sync with your code.
+Dependency Injection System: FastAPI has a robust dependency injection system that simplifies managing complex dependencies like database connections, authentication, and external services. Dependencies are automatically injected into route functions.
+Asynchronous Support: FastAPI natively supports asynchronous programming, allowing you to write asynchronous route handlers and take full advantage of Python's async/await syntax for I/O-bound operations.
+Authentication and Authorization: FastAPI provides built-in support for various authentication methods, including JWT tokens, OAuth2, and API key validation. It also offers authorization decorators to control access to different parts of your API.
+Data Serialization and Parsing: FastAPI handles automatic serialization of Python objects into JSON responses. It can also parse incoming request data, including query parameters, request bodies (JSON, form data), and headers, based on type hints.
+Validation and Query Parameter Handling: FastAPI performs automatic validation of query parameters, path parameters, request bodies, and headers based on type hints. It also handles query parameters, allowing you to define optional and required parameters effortlessly.
+Custom Responses and Status Codes:FastAPI allows you to return custom responses, set specific HTTP status codes, headers, and cookies, giving you fine-grained control over the API responses.
+WebSockets and Background Tasks: FastAPI supports WebSocket communication and background tasks, allowing you to handle real-time interactions and perform asynchronous tasks in the background.
+Automatic Dependency Resolution: FastAPI automatically resolves dependencies based on their type hints, ensuring that the required components are instantiated and passed to the route handlers as needed.
+Core Components of FastAPI
+First, you'll need to install FastAPI and an ASGI server, such as uvicorn, if you haven't already. You can install them using pip:
+
+pip install fastapi uvicorn
+Endpoints
+Endpoints in FastAPI are Python functions that handle incoming HTTP requests. They are defined using the @app.route decorator. Endpoints can have path parameters, query parameters, request bodies, and more. FastAPI automatically handles data validation, serialization, and deserialization based on Python type hints.
+The code for endpoints can be found in various places, reflecting the organization of the project. Specifically, endpoints are defined within the "fastapi/routing/ directory". However, the actual endpoint definitions and route handling are distributed across multiple files due to the modularity of the library.
+
+Overview of where we can find endpoints in the FastAPI repository.
+
+Routing Module:The core endpoint logic can be found in the fastapi/routing.py file. This file contains classes and functions responsible for handling routes, request handling, and response generation.
+Routers: Endpoints are defined in routers. Routers are organized in the fastapi/routers/ directory. Each router file defines endpoints related to specific resources or functionalities.
+Dependencies:Endpoint dependencies (middleware, authentication, etc.) are defined in the fastapi/dependencies/ directory.
+Tests: Tests for endpoints and routing logic are located in the tests/test_routers/ directory. These tests provide examples of how endpoints are tested in the FastAPI library.
+Here @app.get("/") defines an endpoint for the root URL (/) using the GET method. When you make a GET request to the root URL, the read_root() function will be executed. @app.get("/items/{item_id}") defines an endpoint for the /items/{item_id} URL using the GET method. {item_id} is a path parameter, and q is a query parameter. The item_id path parameter is automatically parsed from the URL, and the q query parameter has a default value of None. When a request is made to the /items/{item_id} URL (e.g., /items/42?q=test), the read_item() function will be executed, and it will receive the item_id from the URL path and the optional q query parameter.
+
+from fastapi import FastAPI
+app = FastAPI()
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "q": q}
+Request Handling
+When a request is received, FastAPI automatically parses and validates query parameters, request bodies (JSON, form data), path parameters, and headers using Python type hints. Data validation and serialization are automatically handled, reducing the boilerplate code required for input validation.
+In FastAPI, request handling logic is primarily defined in router modules. Routers handle incoming HTTP requests, and their logic is defined in separate Python files within the routers directory of the FastAPI repository. Each router file contains endpoint definitions, request handling functions, and route configurations. You can find request handling logic in various router files within the FastAPI repository's routers directory.
+
+Example: Create a file (for example, main.py) with the following code:
+
+We import the FastAPI class and create an instance of it.We define a Pydantic model Item to represent the expected request data. Pydantic models are used for data validation and serialization.We create a route using the @app.post("/items/") decorator. The create_item function is the request handler for this route. It takes an Item object as input.Inside the create_item function, we create a dictionary containing the received item data.The function returns this dictionary, which FastAPI automatically serializes into JSON before sending it as the response.
+
+
+
+
+Loading Playground...
+from fastapi import FastAPI
+app = FastAPI()
+class Item:
+    def __init__(self, name, description, price):
+        self.name = name
+        self.description = description
+        self.price = price
+@app.post("/items/")
+async def create_item(item: Item):
+    """
+    Create an item with a name, description, and price.
+    """
+    item_dict = {
+        "name": item.name,
+        "description": item.description,
+        "price": item.price,
+    }
+    return item_dict
+To run the FastAPI application, use the following command:
+
+uvicorn main:app --reload
+This command starts the ASGI server (uvicorn) and tells it to run the app instance from the main.py file. The --reload flag enables automatic code reloading during development.
+
+You can test the API by sending a POST request to http://localhost:8000/items/ with JSON data containing "name", "description", and "price". FastAPI will handle the request, validate the input data, and serialize the output data back to JSON before sending the response.
+If you send this post request
+curl -X POST -H "Content-Type: application/json" -d '{"name": "Example Item", "description": "Test Description", "price": 19.99}' http://localhost:8000/items/
+
+Screenshot-2023-10-09-132300
+Ouput for the above code
+We can see that post request is handled successfully and get request is not mentioned it is failed without giving error on the user side.
+
+Data Models (Pydantic Models)
+In FastAPI, Pydantic models are used for defining the data structures of your application. These models not only serve as a powerful tool for data validation but also play a central role in automatic documentation generation and serialization/deserialization of data. Pydantic models are typically defined in the schemas directory within the FastAPI application, and they help ensure that the data sent to and received from the API endpoints adhere to the specified structure and constraints.
+In the FastAPI repository, you can find Pydantic models defined in the schemas directory within the respective router modules. For example, if you have an items router handling item-related endpoints, you might define a Pydantic model for items in a file like schemas/item.py
+
+Dependency Injection System
+FastAPI provides a powerful dependency injection system, allowing you to declare dependencies for your endpoints. Dependencies can be used for authentication, database connections, external services, etc. FastAPI manages the instantiation and lifecycle of these dependencies.
+The internal implementation of FastAPI's dependency injection system involves a combination of Python's type hinting, function annotations, and a mechanism to inspect these annotations during the request handling process. Overview of how FastAPI handles dependency injection internally:
+
+Type Hints and Annotations: FastAPI heavily relies on Python's type hinting system. When you define a route handler, you can use type hints for function arguments and annotations for function return types.
+Function Inspection: FastAPI inspects the annotations and types of function parameters using Python's inspect module. This inspection allows FastAPI to understand the dependencies required by each route handler.
+Dependency Resolution: When a request is received, FastAPI uses the information obtained from function annotations to identify dependencies. For each dependency required by the route handler, FastAPI calls the corresponding dependency function to resolve the dependency.
+Injection into Route Handlers: FastAPI automatically injects resolved dependencies into route handlers. When a request matches a route, FastAPI calls the route handler function and passes the resolved dependencies as arguments.
+Optional Dependencies: Dependencies can be optional, meaning that they are not required for every request. If a dependency is not needed for a specific route, you can omit it, and FastAPI will not try to resolve it. This flexibility allows you to tailor the dependencies for different routes.
+Lifecycle Management: FastAPI provides hooks for managing the lifecycle of dependencies. For instance, you can create a dependency with a scope (e.g., Depends(get_db, scope="request")) to ensure that the dependency is created once per request, or you can use other scopes like "singleton" or "application" based on your use case.
+Error Handling: FastAPI handles errors related to dependency resolution, ensuring that appropriate error responses are generated when a required dependency cannot be resolved.
+Response Generation
+FastAPI generates responses by utilizing Python's type hinting system, Pydantic models, and the JSON serialization capabilities of the underlying Starlette framework. The response generation process in FastAPI involves the following steps:
+
+Type Hints and Annotations: When you define a route handler in FastAPI, you can specify the expected response model using Python's type hinting system.
+JSON Serialization: FastAPI uses Pydantic models and the jsonable_encoder function from the fastapi.encoders module to serialize Python objects (including Pydantic models) into JSON. This serialized JSON data forms the response body.
+Response Model Validation: Before sending the response, FastAPI validates the response data against the specified response model. If the response data does not conform to the model, FastAPI automatically generates an error response with appropriate status code and error details.
+Status Codes and Headers: FastAPI automatically handles setting the appropriate status code (usually 200 OK for successful responses) and headers for the response. It also handles CORS (Cross-Origin Resource Sharing) headers when necessary.
+Dependency Injection and Background Tasks: FastAPI's dependency injection system can also be used to manage responses. For example, you can create a dependency that handles response headers or background tasks, allowing for further customization of the response generation process.
+Custom Responses: If you need to return a custom response with a specific status code, headers, or other attributes, you can directly return a JSONResponse or a PlainTextResponse from a route handler.
+Automatic Documentation: FastAPI uses the provided response models and type hints to generate interactive API documentation. This documentation includes details about the expected response format, status codes, and example responses.
+Internally, FastAPI leverages the response generation capabilities provided by the Starlette framework, on which FastAPI is built. Starlette handles the low-level HTTP handling and response generation, while FastAPI enriches this process by providing high-level abstractions, automatic validation, and Pydantic model integration, making it easier for developers to work with responses in a strongly typed and intuitive manner.
+
+Middleware
+In FastAPI, middlewares are implemented and managed using the underlying Starlette framework, which provides a flexible and powerful middleware system. FastAPI builds upon Starlette's middleware capabilities to allow developers to define custom middleware functions and apply them to specific routes or the entire application. Here is the overview of middlewares in FastAPI and Starlette:
+
+Starlette Middleware Handling: Starlette handles the execution of middlewares internally. When a request hits the FastAPI application, it passes through all registered middlewares in the order they are defined. Each middleware's call_next function invokes the subsequent middleware or the route handler. Finally, the response travels back through the middlewares in reverse order before being sent to the client.
+Exception Handling: Middlewares are also involved in exception handling. If an exception is raised during the request handling process (in a middleware or route handler), the middlewares are called in reverse order, allowing for exception handling and customization of error responses.
+Context Passing: Middlewares share the same context and state as the request and response objects. This allows middlewares to modify or inspect the request and response components.
+Background Tasks and Dependencies: Middlewares can execute background tasks and use dependencies. They can declare and use dependencies, just like route handlers, providing flexibility and reusability.
+While the internal implementation details of middlewares are handled by the Starlette framework, FastAPI offers a clean and intuitive interface for developers to define, manage, and apply middlewares to their applications, enhancing the application's functionality and customization capabilities.
+
+FastAPI's core components make it a reliable framework, providing developers with a robust, efficient, and intuitive solution for building APIs with Python. Its architecture promotes clean and readable code while managing complex tasks such as data validation, serialization, and dependency management under the hood.
